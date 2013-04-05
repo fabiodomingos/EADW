@@ -14,7 +14,7 @@ The news collection should be performed on demand - invoking a function?
 and new news items found should be added to the repository.
 
 - Doubts to decide:
-Where do we'll store the new items? Which plataform/type/file?
+Where do we'll store the new items? Which platform/type/file?
 
 '''
 
