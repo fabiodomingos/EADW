@@ -15,10 +15,11 @@ in each returned news item
 #interface
 while(1):
     print "INTERFACE\n"
-    option = raw_input("Select an option:")
+    option = raw_input("Select an option: ")
     print "1 Search in news\n"
-    if option == 1:
-        queries = raw_input("SEARCH (insert your queries):")
+    if option == "1":
+        queries = raw_input("SEARCH (insert your queries): ")
         break
     else:
-        print "Invalid Input: Insert the option Number"
+        print "Invalid Input: Insert the option Number.\n"
+        break

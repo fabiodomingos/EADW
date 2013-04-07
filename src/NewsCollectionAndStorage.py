@@ -21,10 +21,15 @@ Use sqlit3?
 ### IMPORTS
 import feedparser
 import sqlite3
+from datetime import datetime
 
 #TODO: identify news items
 #TODO: identify new news items
 #TODO: collect and store -> common repository
+
+### newsFeedName
+newsFeedNames =['dn','jn']
+newsFeedNamesEnum = enumerate(newsFeedNames)
 
 ### FEEDs URLS
 newsFeedDN = "http://feeds.dn.pt/DN-Politica"
@@ -34,12 +39,13 @@ conn = sqlite3.connect("mydatabase.db")
 cursor = conn.cursor()
 
 # create a new Table with 
-def createTable(newsFeedName):
+def createTable():
     # create a table
-    #cursor.execute("""CREATE TABLE newsFeedName
-    #                 (title text, content text, release_date text) 
-    #              """)
-    print ""
+    cursor.execute("""CREATE TABLE newsfeeds
+                     (newsfeedname text, title text, content text, date text) 
+                  """)
+
+#createTable()
 
 ## This function populate a db
 ## without care about updated time
@@ -49,16 +55,17 @@ def poppulateDb(newsFeedX):
     for item in newsFeed.entries:
         titleIn = item.title
         contentIn = item.description
-        dateIn = item.published
+        dateIn = item.published_parsed
+        dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4],dateIn[5])
         # insert some data
-        #cursor.execute("INSERT INTO dn VALUES (titleIn, contentIn, dateIn)")
-        return titleIn, contentIn, dateIn
+        #cursor.execute("INSERT INTO dn VALUES (titleIn, contentIn, dateFinal)")
+        return titleIn, contentIn, dateFinal
 
-#titleDb, contentDb, dateDb = poppulateDb(newsFeedDN)
+titleDb, contentDb, dateFinalDb = poppulateDb(newsFeedDN)
 
-#print titleDb
-#print contentDb
-#print dateDb
+print titleDb
+print contentDb
+print dateFinalDb
 
 # function to search if there are new news and collect them
 def collectNewItems(newsFeedX):
