@@ -1,8 +1,7 @@
 '''
 Created on 2013/04/05
 
-@author: goncalocarito
-@authro: fabiodomings
+@author: goncalocarito, fabiodomingos
 
 1) pull public news feed
 2) identify 
