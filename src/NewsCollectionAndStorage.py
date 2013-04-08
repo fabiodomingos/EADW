@@ -69,18 +69,7 @@ print dateFinalDb
 
 # function to search if there are new news and collect them
 def collectNewItems(newsFeedX):
-    #TODO
-    newsFeed = feedparser.parse(newsFeedX)
-    print newsFeed.feed.title
-    lastUpdatedFeed = newsFeed.feed.updated
-    lastUpdatedSystem = 0
-
-    # update time
-    def update():
-        lastUpdatedSystem = lastUpdatedFeed
-        
-    for item in newsFeed.entries:
-        print item
+    print ""
         
 # function to store items in the correspondent table        
 def storageItems(*args):
