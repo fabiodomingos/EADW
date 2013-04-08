@@ -35,18 +35,23 @@ newsFeedNamesEnum = enumerate(newsFeedNames)
 newsFeedDN = "http://feeds.dn.pt/DN-Politica"
 newsFeedJN = "http://feeds.jn.pt/JN-Politica"
 
-conn = sqlite3.connect("mydatabase.db")
+conn = sqlite3.connect(":memory:")
 cursor = conn.cursor()
 
 # create a new Table with 
 def createTable():
     # create a table
-    cursor.execute("""CREATE TABLE newsfeeds
-                     (newsfeedname text, title text, content text, date text) 
-                  """)
+    #cursor.execute("""CREATE TABLE newsfeeds
+    #                 (newsfeedname text, title text, content text, date text) 
+    #              """)
+    cursor.execute('''CREATE TABLE news (titulo TEXT, conteudo TEXT, date TEXT)''')
 
-#createTable()
 
+# Insert new New on the table news
+def addNew(titulo, conteudo,date):
+    cursor.execute('''INSERT INTO news (titulo, conteudo, date)
+    VALUES (?,?,?)''',(titulo,conteudo,date))
+    
 ## This function populate a db
 ## without care about updated time
 ## just pick up all the news item and put it into the db
@@ -58,20 +63,37 @@ def poppulateDb(newsFeedX):
         dateIn = item.published_parsed
         dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4],dateIn[5])
         # insert some data
-        #cursor.execute("INSERT INTO dn VALUES (titleIn, contentIn, dateFinal)")
-        return titleIn, contentIn, dateFinal
-
-titleDb, contentDb, dateFinalDb = poppulateDb(newsFeedDN)
-
-print titleDb
-print contentDb
-print dateFinalDb
+        addNew(titleIn,contentIn,dateFinal)
 
 # function to search if there are new news and collect them
 def collectNewItems(newsFeedX):
-    print ""
+    cursor.execute('SELECT * FROM news ASC LIMIT 1')
+    
+    
         
 # function to store items in the correspondent table        
 def storageItems(*args):
-    print ""
+    print "storageNewItems"
+
+ 
+def main():
+    createTable()
+    
+    poppulateDb(newsFeedJN)
+      
+    conn.commit()
+    
+    poppulateDb(newsFeedDN)
+    
+    conn.commit()
+    
+    #collectNewItems(newsFeedDN)
+    cursor.execute('SELECT * FROM news')
+    
+    for i in cursor:
+        print "\n"
+        for j in i:
+            print j
+    
+main()
 
