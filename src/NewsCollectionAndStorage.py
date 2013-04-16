@@ -31,9 +31,6 @@ from whoosh.qparser import QueryParser, OrGroup
 import os.path
 import re
 
-#TODO: identify news items
-#TODO: identify new news items
-#TODO: collect and store -> common repository
 
 ### newsFeedName
 newsFeedNames =['dn','jn']
@@ -64,14 +61,16 @@ def createIndexWhoosh():
         os.mkdir("index")
     ix = create_in("index", schema)
     return ix
-    
+
+indexGeral = createIndexWhoosh()
 
 # AUX Function
 # Insert new 'New' on the table news
 def addNew(titulo, conteudo,date):
     cursor.execute('''INSERT INTO news (titulo, conteudo, date)
     VALUES (?,?,?)''',(titulo,conteudo,date))
-    
+
+# NOT USED FOR NOW    
 # AUX Function    
 # get the link for the whole news (not only the resume)
 def getLinksNews(newsFeedX):
@@ -84,8 +83,7 @@ def getLinksNews(newsFeedX):
 ## This function is called once - to poppulate the db in the beginning
 def poppulateDb(newsFeedX):
     newsFeed = feedparser.parse(newsFeedX)
-    index = createIndexWhoosh()
-    writer = index.writer()
+    writer = indexGeral.writer()
     for item in newsFeed.entries:
         titleIn = item.title
         contentIn = item.description
@@ -95,7 +93,7 @@ def poppulateDb(newsFeedX):
         # insert some data in database
         addNew(titleIn,contentOut,dateFinal)
         # whoosh
-        writer.add_document(content=contentIn, date=dateFinal, title=titleIn)
+        writer.add_document(content=contentOut, date=dateFinal, title=titleIn)
     writer.commit()
 
 # SERVE APENAS PARA FAZER TESTES DE METER COISAS NA DB
@@ -131,9 +129,11 @@ def remove_html_tags(data):
     return p.sub('', data)
 
 # function to search if there are new news and collect them
+# TODO: add whoosh
 def collectNewItems(newsFeedX):
     newsFeed = feedparser.parse(newsFeedX)
     lastDbDate = getLastUpdatedDate()
+    writer = indexGeral.writer()
     for item in newsFeed.entries:
         dateIn = item.published_parsed
         dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4],dateIn[5])
@@ -143,6 +143,9 @@ def collectNewItems(newsFeedX):
             contentOut = remove_html_tags(contentIn)
             # insert some data
             addNew(titleIn,contentOut,dateFinal)
+            # whoosh
+            writer.add_document(content=contentOut, date=dateFinal, title=titleIn)
+    writer.commit()
             
             
 def query_func(user_input):
@@ -156,6 +159,8 @@ def query_func(user_input):
 
  
 def main():
+    
+    
     #getLinksNews(newsFeedJN)
     
     #createTable()
@@ -164,18 +169,18 @@ def main():
     #conn.commit()
     
     #######
-    #poppulateDb(newsFeedJN)
-    #conn.commit()
-    #poppulateDb(newsFeedDN)
-    #conn.commit()
+    poppulateDb(newsFeedJN)
+    conn.commit()
+    poppulateDb(newsFeedDN)
+    conn.commit()
 
-    collectNewItems(newsFeedJN)
-    conn.commit
+    #collectNewItems(newsFeedJN)
+    #conn.commit
     
     #a=getLastUpdatedDec()
     #remove_html_tags(a)
     
-    getAllDb()
+    #getAllDb()
     
     #getLastUpdatedDate()
         
@@ -183,5 +188,7 @@ def main():
     #html = urlopen(url).read()    
     #raw = nltk.clean_html(html)  
     #print(raw)
+    
+    query_func("leu")
 
 main()
