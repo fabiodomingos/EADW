@@ -22,6 +22,8 @@ Use sqlit3?
 import feedparser
 import sqlite3
 from datetime import datetime
+import nltk   
+from urllib import urlopen
 
 #TODO: identify news items
 #TODO: identify new news items
@@ -52,6 +54,12 @@ def addNew(titulo, conteudo,date):
     cursor.execute('''INSERT INTO news (titulo, conteudo, date)
     VALUES (?,?,?)''',(titulo,conteudo,date))
     
+def getLinksNews(newsFeedX):
+    newsLink = feedparser.parse(newsFeedX)
+    print newsLink['entries'][0]['link'] 
+    
+
+        
 ## This function populate a db
 ## without care about updated time
 ## just pick up all the news item and put it into the db
@@ -77,6 +85,8 @@ def storageItems(*args):
 
  
 def main():
+    #getLinksNews(newsFeedJN)
+    
     createTable()
     
     poppulateDb(newsFeedJN)
@@ -87,13 +97,18 @@ def main():
     
     conn.commit()
     
-    #collectNewItems(newsFeedDN)
+    collectNewItems(newsFeedDN)
     cursor.execute('SELECT * FROM news')
     
     for i in cursor:
         print "\n"
         for j in i:
             print j
+    
+    #url = "http://feeds.dn.pt/~r/DN-Politica/~3/JzTprZ3hDqQ/story01.htm"    
+    #html = urlopen(url).read()    
+    #raw = nltk.clean_html(html)  
+    #print(raw)
     
 main()
 
