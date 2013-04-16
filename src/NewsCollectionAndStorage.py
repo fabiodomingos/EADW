@@ -26,9 +26,7 @@ from whoosh.index import create_in
 from whoosh.fields import Schema
 from whoosh.fields import NUMERIC
 from whoosh.fields import TEXT
-
-import nltk   
-from urllib import urlopen
+import re
 
 #TODO: identify news items
 #TODO: identify new news items
@@ -42,7 +40,7 @@ newsFeedNamesEnum = enumerate(newsFeedNames)
 newsFeedDN = "http://feeds.dn.pt/DN-Politica"
 newsFeedJN = "http://feeds.jn.pt/JN-Politica"
 
-conn = sqlite3.connect(":memory:")
+conn = sqlite3.connect("teste.db")
 cursor = conn.cursor()
 
 # create a new Table with titulo, conteudo, data
@@ -83,16 +81,27 @@ def poppulateDb(newsFeedX):
     for item in newsFeed.entries:
         titleIn = item.title
         contentIn = item.description
+        contentOut = remove_html_tags(contentIn)
         dateIn = item.published_parsed
         dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4],dateIn[5])
         # insert some data in database
-        addNew(titleIn,contentIn,dateFinal)
+        addNew(titleIn,contentOut,dateFinal)
         # whoosh
         #index = createIndexWhoosh()
         #writer = index.writer()
         #writer.add_document(id=i, content=contentIn)
 
-    
+# SERVE APENAS PARA FAZER TESTES DE METER COISAS NA DB
+def populateTeste():
+    d=feedparser.parse(newsFeedJN)
+    titulo = d['entries'][2]['title']
+    conteudo = d['entries'][2]['description']
+    contentOut = remove_html_tags(conteudo)
+    dateIn = d['entries'][2]['published_parsed']
+    dataFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4],dateIn[5])
+    addNew(titulo,contentOut,dataFinal)
+
+# Print all db elements    
 def getAllDb():
     cursor.execute('SELECT * FROM news ORDER BY date DESC')
     for i in cursor:
@@ -103,44 +112,60 @@ def getAllDb():
 def getLastUpdatedDate():
     cursor.execute('SELECT date FROM news ORDER BY date DESC LIMIT 1')
     for i in cursor:
-        return i
-    
+        # Converte o tuplo para string 
+        tuploTOstr = "".join(i)
+        # Converte a string unicode para datetime
+        date=datetime.strptime(tuploTOstr, '%Y-%m-%d %H:%M:%S')
+        return date
+
+# Funtion to remove htlm tags of feeds elements
+def remove_html_tags(data):
+    p = re.compile(r'<.*?>')
+    return p.sub('', data)
+
 # function to search if there are new news and collect them
 def collectNewItems(newsFeedX):
     newsFeed = feedparser.parse(newsFeedX)
+    lastDbDate = getLastUpdatedDate()
     for item in newsFeed.entries:
         dateIn = item.published_parsed
         dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4],dateIn[5])
-        # if(dateFinal )
-        titleIn = item.title
-        contentIn = item.description
-        dateIn = item.published_parsed
-        dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4],dateIn[5])
-        # insert some data
-        addNew(titleIn,contentIn,dateFinal)
-    conn.commit()
+        if(dateFinal > lastDbDate):
+            titleIn = item.title
+            contentIn = item.description
+            contentOut = remove_html_tags(contentIn)
+            # insert some data
+            addNew(titleIn,contentOut,dateFinal)
     
 
  
 def main():
     #getLinksNews(newsFeedJN)
     
-    createTable()
+    #createTable()
+    
+    #populateTeste()
+    #conn.commit()
     
     #######
-    poppulateDb(newsFeedJN)
-    conn.commit()
-    poppulateDb(newsFeedDN)
-    conn.commit()
+    #poppulateDb(newsFeedJN)
+    #conn.commit()
+    #poppulateDb(newsFeedDN)
+    #conn.commit()
 
-    getLastUpdatedDate()
+    collectNewItems(newsFeedJN)
+    conn.commit
+    
+    #a=getLastUpdatedDec()
+    #remove_html_tags(a)
+    
+    getAllDb()
+    
+    #getLastUpdatedDate()
         
     #url = "http://feeds.dn.pt/~r/DN-Politica/~3/JzTprZ3hDqQ/story01.htm"    
     #html = urlopen(url).read()    
     #raw = nltk.clean_html(html)  
     #print(raw)
-    
-    
-    
-main()
 
+main()
