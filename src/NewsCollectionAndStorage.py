@@ -22,10 +22,13 @@ Use sqlit3?
 import feedparser
 import sqlite3
 from datetime import datetime
-from whoosh.index import create_in 
+from whoosh.index import create_in
+from whoosh.index import open_dir   
 from whoosh.fields import Schema
-from whoosh.fields import NUMERIC
+from whoosh.fields import DATETIME
 from whoosh.fields import TEXT
+from whoosh.qparser import QueryParser, OrGroup
+import os.path
 import re
 
 #TODO: identify news items
@@ -55,8 +58,11 @@ def createTable():
 # create a new Index for Whoosh
 # @returns: ix - Index Object 
 def createIndexWhoosh():
-    schema = Schema(id = NUMERIC(stored=True), content=TEXT)  ## TODO: confirmar campo stored : o que faz
-    ix = create_in("indexdir", schema)
+    ## conteudo pode ser 
+    schema = Schema(content=TEXT(stored=True), date=DATETIME, title=TEXT(stored=True))  
+    if not os.path.exists("index"):
+        os.mkdir("index")
+    ix = create_in("index", schema)
     return ix
     
 
@@ -78,6 +84,8 @@ def getLinksNews(newsFeedX):
 ## This function is called once - to poppulate the db in the beginning
 def poppulateDb(newsFeedX):
     newsFeed = feedparser.parse(newsFeedX)
+    index = createIndexWhoosh()
+    writer = index.writer()
     for item in newsFeed.entries:
         titleIn = item.title
         contentIn = item.description
@@ -87,9 +95,8 @@ def poppulateDb(newsFeedX):
         # insert some data in database
         addNew(titleIn,contentOut,dateFinal)
         # whoosh
-        #index = createIndexWhoosh()
-        #writer = index.writer()
-        #writer.add_document(id=i, content=contentIn)
+        writer.add_document(content=contentIn, date=dateFinal, title=titleIn)
+    writer.commit()
 
 # SERVE APENAS PARA FAZER TESTES DE METER COISAS NA DB
 def populateTeste():
@@ -136,6 +143,15 @@ def collectNewItems(newsFeedX):
             contentOut = remove_html_tags(contentIn)
             # insert some data
             addNew(titleIn,contentOut,dateFinal)
+            
+            
+def query_func(user_input):
+    ix = open_dir("index")
+    with ix.searcher() as searcher: 
+        query = QueryParser("content", ix.schema, group=OrGroup).parse(u""+user_input) 
+        results = searcher.search(query) 
+        for r in results:
+            print r
     
 
  
