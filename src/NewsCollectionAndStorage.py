@@ -17,7 +17,6 @@ Where do we'll store the new items? Which platform/type/file?
 Use sqlit3?
 
 '''
-
 ### IMPORTS
 import feedparser
 import sqlite3
@@ -43,6 +42,7 @@ newsFeedJN = "http://feeds.jn.pt/JN-Politica"
 conn = sqlite3.connect("teste.db")
 cursor = conn.cursor()
 
+
 # create a new Table with titulo, conteudo, data
 # this function is just called once
 def createTable():
@@ -62,8 +62,6 @@ def createIndexWhoosh():
     ix = create_in("index", schema)
     return ix
 
-indexGeral = createIndexWhoosh()
-
 # AUX Function
 # Insert new 'New' on the table news
 def addNew(titulo, conteudo,date):
@@ -81,19 +79,20 @@ def getLinksNews(newsFeedX):
 ## without care about updated time
 ## just pick up all the news item and put it into the db
 ## This function is called once - to poppulate the db in the beginning
-def poppulateDb(newsFeedX):
+def poppulateDb(newsFeedX, indexGeral=createIndexWhoosh()):
     newsFeed = feedparser.parse(newsFeedX)
     writer = indexGeral.writer()
     for item in newsFeed.entries:
         titleIn = item.title
         contentIn = item.description
         contentOut = remove_html_tags(contentIn)
+        print contentOut
         dateIn = item.published_parsed
         dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4],dateIn[5])
         # insert some data in database
         addNew(titleIn,contentOut,dateFinal)
         # whoosh
-        writer.add_document(content=contentOut, date=dateFinal, title=titleIn)
+        writer.add_document(content=contentOut.decode('latin-1'), date=dateFinal, title=titleIn)
     writer.commit()
 
 # SERVE APENAS PARA FAZER TESTES DE METER COISAS NA DB
@@ -129,8 +128,7 @@ def remove_html_tags(data):
     return p.sub('', data)
 
 # function to search if there are new news and collect them
-# TODO: add whoosh
-def collectNewItems(newsFeedX):
+def collectNewItems(newsFeedX, indexGeral = open_dir("index")):
     newsFeed = feedparser.parse(newsFeedX)
     lastDbDate = getLastUpdatedDate()
     writer = indexGeral.writer()
