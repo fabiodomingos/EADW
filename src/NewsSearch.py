@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 '''
 Created on 2013/04/05
 
@@ -35,6 +37,8 @@ def search(queries):
         query = QueryParser("content", ix.schema, group=OrGroup).parse(u""+queries) 
         results = searcher.search(query) 
         printResults(results)
+        
+## TODO: search with personalities
         
 
 # ## AUXILIAR FUNCTIONS
