@@ -57,12 +57,13 @@ def extractall_entities(text):
 
 def main():
     
-    text = "As mais recentes exibicoes do Cavaco com a camisola encarnada nao tem passado despercebidas a ninguem, e, segundo a imprensa holandesa, o Peter e o mais recente interessado nos servicos do extremo internacional argentino, de 25 anos."
-    #extractall_entities(text)
-    #coisa = extract_entities(text)
+    #text = "As mais recentes exibiçoes do Cavaco com a camisola encarnada nao tem passado despercebidas a ninguem, e, segundo a imprensa holandesa, o Peter e o mais recente interessado nos servicos do extremo internacional argentino, de 25 anos."
+    text = u"O Aníbal Cavaco Silva foi as compras."
+    extractall_entities(text)
+    #coisa = extract_entities("Aníbal Cavaco Silva")
     #print coisa
-    coisa = finalPersonalities("Aníbal Cavaco Silva")
-    print coisa
+    #coisa = finalPersonalities("Aníbal Cavaco Silva")
+    #print coisa
     
     #coisa = isPersonalitie('Aníbal Cavaco Silva')
     #print coisa

@@ -116,11 +116,12 @@ def remove_html_tags(data):
     
 
  
-#def main():
-   # poppulateIndex(newsFeedJN)
+def main():
+
+    #poppulateIndex(newsFeedJN)
     #NewsSearch.printAll()
     #collectNewNotices(newsFeedDN)
-    #NewsSearch.printAll()
+    NewsSearch.printAll()
 
 #main()
 

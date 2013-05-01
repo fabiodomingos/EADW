@@ -47,8 +47,10 @@ def printAll():
     """ dump. print all the items in the Index """
     ix = open_dir('index')
     with ix.searcher() as searcher:
+        print "========== PRINTING ALL ============"
         for doc in searcher.documents():
             print "================ News =============="
+            print doc
             print ">>TITLE"
             print doc['title']
             print ">>CONTENT"
@@ -58,8 +60,10 @@ def printAll():
 
 def printResults(results):
     """ dump. print all items in a result Object """
+    print "========== PRINTING RESULTS ========"
     for r in results:
         print "================ News =============="
+        print r
         print ">>TITLE"
         print r['title']
         print ">>CONTENT"
@@ -82,3 +86,7 @@ def getLastDate():
     hit = getLastNotice()
     dateFinal = hit['date']
     return dateFinal
+
+printAll()
+search("cívicos")
+
