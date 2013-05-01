@@ -29,11 +29,12 @@ and new news items found should be added to the repository.
 from datetime import datetime
 from whoosh.fields import DATETIME, Schema, TEXT
 from whoosh.index import create_in, open_dir
+from bs4 import BeautifulSoup as BS
 import NewsSearch
 import feedparser
 import os.path
-import re
 import sqlite3
+import requests
 
 
 # ## INITS
@@ -72,11 +73,11 @@ def poppulateIndex(newsFeedX):
     writer = indexGeral.writer()
     for item in newsFeed.entries:
         titleFinal = item.title
-        contentIn = item.description
-        contentFinal = remove_html_tags(contentIn)
+        newsLink = item.link
+        new=getAllNew(newsLink)
         dateIn = item.published_parsed
         dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4], dateIn[5])
-        writer.add_document(content=contentFinal, date=dateFinal, title=titleFinal)
+        writer.add_document(content=new, date=dateFinal, title=titleFinal)
     writer.commit()
     
     
@@ -95,35 +96,29 @@ def collectNewNotices(newsFeedX):
         # only adds a item if it's more recent that the ones stored in the index
         if(dateFinal > lastDate):
             titleFinal = item.title
-            contentIn = item.description
-            contentFinal = remove_html_tags(contentIn)
-            writer.add_document(content=contentFinal, date=dateFinal, title=titleFinal)
+            newsLink = item.link
+            new=getAllNew(newsLink)
+            writer.add_document(content=new, date=dateFinal, title=titleFinal)
     writer.commit()
     
     
 # ## AUXILIAR FUNCTIONS
-
-def getLinksNews(newsFeedX):
-    """ NOT USED FOR NOW       
-        get the link for the whole news (not only the resume) """
-    newsLink = feedparser.parse(newsFeedX)
-    print newsLink['entries'][0]['link'] 
     
-def remove_html_tags(data):
-    """ removes html tags of feeds elements """
-    p = re.compile(r'<.*?>')
-    return p.sub('', data)
-    
+# Agarra no link do feed e vai buscar toda a noticia 
+def getAllNew(link):
+    html = requests.get(link).text
+    soup = BS(html)
+    new='\n'.join([k.text for k in soup.find(id='Article').find_all('p')])
+    return new
 
- 
 def main():
 
-    #poppulateIndex(newsFeedJN)
-    #NewsSearch.printAll()
-    #collectNewNotices(newsFeedDN)
+    poppulateIndex(newsFeedJN)
     NewsSearch.printAll()
+    #collectNewNotices(newsFeedDN)
+    #NewsSearch.printAll()
 
-#main()
+main()
 
 
 
@@ -159,23 +154,23 @@ def poppulateDb(newsFeedX):
     newsFeed = feedparser.parse(newsFeedX)
     for item in newsFeed.entries:
         titleIn = item.title
-        contentIn = item.description
-        contentOut = remove_html_tags(contentIn)
+        newsLink = item.link
+        new=getAllNew(newsLink)
         # print contentOut
         dateIn = item.published_parsed
         dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4], dateIn[5])
         # insert some data in database
-        addNew(titleIn, contentOut, dateFinal)
+        addNew(titleIn, new, dateFinal)
         
 # SERVE APENAS PARA FAZER TESTES DE METER COISAS NA DB
-def populateTeste():
-    d = feedparser.parse(newsFeedJN)
-    titulo = d['entries'][2]['title']
-    conteudo = d['entries'][2]['description']
-    contentOut = remove_html_tags(conteudo)
-    dateIn = d['entries'][2]['published_parsed']
-    dataFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4], dateIn[5])
-    addNew(titulo, contentOut, dataFinal)
+#def populateTeste():
+    #d = feedparser.parse(newsFeedJN)
+    #titulo = d['entries'][2]['title']
+    #conteudo = d['entries'][2]['description']
+    #contentOut = remove_html_tags(conteudo)
+    #dateIn = d['entries'][2]['published_parsed']
+    #dataFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4], dateIn[5])
+    #addNew(titulo, contentOut, dataFinal)
     
 # Print all db elements    
 def getAllDb():
@@ -203,8 +198,8 @@ def collectNewItemsSqLite(newsFeedX):
         dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4], dateIn[5])
         if(dateFinal > lastDbDate):
             titleIn = item.title
-            contentIn = item.description
-            contentOut = remove_html_tags(contentIn)
+            newsLink = item.link
+            new=getAllNew(newsLink)
             # insert some data
-            addNew(titleIn, contentOut, dateFinal)
+            addNew(titleIn, new, dateFinal)
             
