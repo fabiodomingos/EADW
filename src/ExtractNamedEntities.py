@@ -28,7 +28,7 @@ def isPersonalitie(name):
         p = personalities['listPersonalities']
         for key in p:
             if name in key:
-                return True
+                return key
         return False
 
 def extract_entities(text):
@@ -43,8 +43,9 @@ def finalPersonalities(text):
     finallist = []
     persons = extract_entities(text)
     for person in persons:
-        if isPersonalitie(person):
-            finallist.append(person)
+        pessoa= isPersonalitie(person)
+        if pessoa!=False and pessoa not in finallist:
+            finallist.append(pessoa)
     return finallist
             
 
@@ -55,14 +56,15 @@ def extractall_entities(text):
             
     
 
-def main():
+#def main():
     
+    #isPersonalitie('Cavaco')
     #text = "As mais recentes exibiçoes do Cavaco com a camisola encarnada nao tem passado despercebidas a ninguem, e, segundo a imprensa holandesa, o Peter e o mais recente interessado nos servicos do extremo internacional argentino, de 25 anos."
-    text = u"O Aníbal Cavaco Silva foi as compras."
-    extractall_entities(text)
+    #text = u"O Aníbal Cavaco Silva foi as compras."
+    #extractall_entities(text)
     #coisa = extract_entities("Aníbal Cavaco Silva")
     #print coisa
-    #coisa = finalPersonalities("Aníbal Cavaco Silva")
+    #coisa = finalPersonalities(text)
     #print coisa
     
     #coisa = isPersonalitie('Aníbal Cavaco Silva')
@@ -71,4 +73,4 @@ def main():
    
     
 
-main()
+#main()

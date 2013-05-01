@@ -21,7 +21,7 @@ Output: list of news ranked by relevance (with e.g BM25)
 from whoosh.qparser import QueryParser, OrGroup
 from whoosh.index import open_dir  
 from whoosh.qparser.dateparse import DateParserPlugin
-
+import ExtractNamedEntities
 
 # ## MAIN FUNCTIONS
 
@@ -36,7 +36,7 @@ def search(queries):
     with ix.searcher() as searcher: 
         query = QueryParser("content", ix.schema, group=OrGroup).parse(u""+queries) 
         results = searcher.search(query) 
-        printResults(results)
+        printPersons(results)
         
 ## TODO: search with personalities
         
@@ -71,6 +71,21 @@ def printResults(results):
         print ">>DATE"
         print r['date']
 
+def printPersons(results):
+    """ dump. print all items in a result Object """
+    print "========== PRINTING RESULTS ========"
+    for r in results:
+        print "================ News =============="
+        print ">>TITLE"
+        print r['title']
+        print ">>CONTENT"
+        text=r['content']
+        print text
+        print ">>PERSONS"
+        person=ExtractNamedEntities.finalPersonalities(text)
+        print person
+    
+        
 def getLastNotice():
     """ @returns the last added notice to the Index """
     ix = open_dir("index")
@@ -87,6 +102,6 @@ def getLastDate():
     dateFinal = hit['date']
     return dateFinal
 
-printAll()
-search("cívicos")
+#printAll()
+search("país")
 
