@@ -22,6 +22,9 @@ from whoosh.qparser import QueryParser, OrGroup
 from whoosh.index import open_dir  
 from whoosh.qparser.dateparse import DateParserPlugin
 import ExtractNamedEntities
+import SentimentAnalysis
+
+Sentilex='SentiLex-PT02/SentiLex-lem-PT02.txt'
 
 # ## MAIN FUNCTIONS
 
@@ -84,8 +87,10 @@ def printPersons(results):
         print ">>PERSONS"
         person=ExtractNamedEntities.finalPersonalities(text)
         print person
-    
-        
+        print ">>QUALIFY"
+        qualify=SentimentAnalysis.QualifyNew(SentimentAnalysis.FilterNew(text),SentimentAnalysis.ExtractSentilex(Sentilex))
+        print qualify
+            
 def getLastNotice():
     """ @returns the last added notice to the Index """
     ix = open_dir("index")
