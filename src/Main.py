@@ -13,6 +13,8 @@ in each returned news item
 '''
 import NewsCollectionAndStorage
 import NewsSearch
+import SentimentAnalysis
+import NLP_PT
 
 # newsFeedName
 newsFeedNames = ['dn', 'jn']
@@ -20,6 +22,12 @@ newsFeedNamesEnum = enumerate(newsFeedNames)
 # FEEDs URLS
 DN = "http://feeds.dn.pt/DN-Politica"
 JN = "http://feeds.jn.pt/JN-Politica"
+
+token = NLP_PT.tokenizerPT()
+
+## RUN
+sentilexfile='SentiLex-PT02/SentiLex-lem-PT02.txt'
+sentilexDic = SentimentAnalysis.extractSentilex(sentilexfile)
 
 #interface
 while(1):
@@ -78,7 +86,7 @@ while(1):
                 continue
             
             elif menuOption == "2":
-                NewsSearch.searchByQualify(search)
+                NewsSearch.searchByQualify(search, sentilexDic)
                 continue
             
             elif menuOption == "0":

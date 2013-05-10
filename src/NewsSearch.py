@@ -23,8 +23,11 @@ from whoosh.index import open_dir
 from whoosh.qparser.dateparse import DateParserPlugin
 import ExtractNamedEntities
 import SentimentAnalysis
+import NLP_PT
 
 Sentilex='SentiLex-PT02/SentiLex-lem-PT02.txt'
+
+token = NLP_PT.tokenizerPT()
 
 # ## MAIN FUNCTIONS
 
@@ -51,7 +54,7 @@ def searchByPersonalitie(queries):
         results = searcher.search(query)
         printPersons(results)
 
-def searchByQualify(queries):
+def searchByQualify(queries, sentilex):
     """ receives a query
         @returns items resulted by the query search, sorted by BM25
         THIS FUNCTION IS PRINTING IN THE SCREEN NOW"""
@@ -59,7 +62,7 @@ def searchByQualify(queries):
     with ix.searcher() as searcher: 
         query = QueryParser("content", ix.schema, group=OrGroup).parse(u""+queries) 
         results = searcher.search(query)
-        printQualify(results)
+        printQualify(results, sentilex)
         
 ## TODO: search with personalities
         
@@ -106,7 +109,7 @@ def printPersons(results):
         person=ExtractNamedEntities.finalPersonalities(text)
         print person
         
-def printQualify(results):
+def printQualify(results, extractsentilex):
     """ dump. print all items in a result Object """
     print "========== PRINTING ALL PERSONS ========"
     for r in results:
@@ -117,7 +120,7 @@ def printQualify(results):
         text=r['content']
         print text
         print ">>QUALIFY"
-        qualify=SentimentAnalysis.QualifyNew(SentimentAnalysis.FilterNew(text),SentimentAnalysis.ExtractSentilex(Sentilex))
+        qualify=SentimentAnalysis.qualifyNew(token.filter(text), extractsentilex)
         print qualify
             
 def getLastNotice():
