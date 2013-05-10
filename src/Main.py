@@ -11,15 +11,81 @@ in each returned news item
 - other analysis could also been invoked here and creat another functions/py modules
 
 '''
+import NewsCollectionAndStorage
+import NewsSearch
+
+# newsFeedName
+newsFeedNames = ['dn', 'jn']
+newsFeedNamesEnum = enumerate(newsFeedNames)
+# FEEDs URLS
+DN = "http://feeds.dn.pt/DN-Politica"
+JN = "http://feeds.jn.pt/JN-Politica"
 
 #interface
 while(1):
-    print "INTERFACE\n"
+    print "DATA MINING - INTERFACE"
+    print "1 - Populate DB"
+    print "2 - Collect new News"
+    print "3 - Search in the news"
+    
     option = raw_input("Select an option: ")
-    print "1 Search in news\n"
+    
     if option == "1":
-        queries = raw_input("SEARCH (insert your queries): ")
-        break
+        print "Tem ao seu dipor o JN e o DN"
+        feed = raw_input("Select your Newspaper: ")
+        if feed=="DN":
+            feed=DN
+            NewsCollectionAndStorage.poppulateIndex(feed)
+            NewsSearch.printAll()
+            continue
+        elif feed=="JN":
+            feed=JN
+            NewsCollectionAndStorage.poppulateIndex(feed)
+            NewsSearch.printAll()
+            continue
+        else:
+            print "Invalid Input: You need to choose JN or DN"
+    
+    elif option == "2":
+        print "Tem ao seu dipor o JN e o DN"
+        feed = raw_input("Select your Newspaper: ")
+        if feed=="DN":
+            feed=DN
+            NewsCollectionAndStorage.collectNewNotices(feed)
+            NewsSearch.printAll()
+            continue
+        elif feed=="JN":
+            feed=JN
+            NewsCollectionAndStorage.collectNewNotices(feed)
+            NewsSearch.printAll()
+            continue
+        else:
+            print "Invalid Input: You need to choose JN or DN"
+    
+    elif option == "3":
+        search = raw_input("Find the news with word: ")
+        NewsSearch.searchByRelevance(search)
+        
+        while(1):            
+            print "1 - Search the Personalities in the news with your word"
+            print "2 - Qualify the News with your word"
+            print "0 - Return to Interface"
+            
+            menuOption= raw_input("Select an option: ")
+            
+            if menuOption == "1":
+                NewsSearch.searchByPersonalitie(search)
+                continue
+            
+            elif menuOption == "2":
+                NewsSearch.searchByQualify(search)
+                continue
+            
+            elif menuOption == "0":
+                break
+            else: 
+                print "Invalid Input: Insert the option Number.\n"
+                continue    
     else:
         print "Invalid Input: Insert the option Number.\n"
-        break
+        continue

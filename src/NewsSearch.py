@@ -31,15 +31,35 @@ Sentilex='SentiLex-PT02/SentiLex-lem-PT02.txt'
 # SEARCH    
 # function that receives a query and returns a list with news that match
 # the search, sorted by BM25
-def search(queries):
+def searchByRelevance(queries):
     """ receives a query
         @returns items resulted by the query search, sorted by BM25
         THIS FUNCTION IS PRINTING IN THE SCREEN NOW"""
     ix = open_dir("index")
     with ix.searcher() as searcher: 
         query = QueryParser("content", ix.schema, group=OrGroup).parse(u""+queries) 
-        results = searcher.search(query) 
+        results = searcher.search(query)
+        printResults(results)
+
+def searchByPersonalitie(queries):
+    """ receives a query
+        @returns items resulted by the query search, sorted by BM25
+        THIS FUNCTION IS PRINTING IN THE SCREEN NOW"""
+    ix = open_dir("index")
+    with ix.searcher() as searcher: 
+        query = QueryParser("content", ix.schema, group=OrGroup).parse(u""+queries) 
+        results = searcher.search(query)
         printPersons(results)
+
+def searchByQualify(queries):
+    """ receives a query
+        @returns items resulted by the query search, sorted by BM25
+        THIS FUNCTION IS PRINTING IN THE SCREEN NOW"""
+    ix = open_dir("index")
+    with ix.searcher() as searcher: 
+        query = QueryParser("content", ix.schema, group=OrGroup).parse(u""+queries) 
+        results = searcher.search(query)
+        printQualify(results)
         
 ## TODO: search with personalities
         
@@ -50,10 +70,9 @@ def printAll():
     """ dump. print all the items in the Index """
     ix = open_dir('index')
     with ix.searcher() as searcher:
-        print "========== PRINTING ALL ============"
+        print "========== PRINTING ALL NEWS ============"
         for doc in searcher.documents():
-            print "================ News =============="
-            print doc
+            print "================ New =============="
             print ">>TITLE"
             print doc['title']
             print ">>CONTENT"
@@ -63,10 +82,9 @@ def printAll():
 
 def printResults(results):
     """ dump. print all items in a result Object """
-    print "========== PRINTING RESULTS ========"
+    print "========== PRINTING ALL RESULTS ========"
     for r in results:
-        print "================ News =============="
-        print r
+        print "================ New =============="
         print ">>TITLE"
         print r['title']
         print ">>CONTENT"
@@ -76,7 +94,7 @@ def printResults(results):
 
 def printPersons(results):
     """ dump. print all items in a result Object """
-    print "========== PRINTING RESULTS ========"
+    print "========== PRINTING ALL PERSONS ========"
     for r in results:
         print "================ News =============="
         print ">>TITLE"
@@ -87,6 +105,17 @@ def printPersons(results):
         print ">>PERSONS"
         person=ExtractNamedEntities.finalPersonalities(text)
         print person
+        
+def printQualify(results):
+    """ dump. print all items in a result Object """
+    print "========== PRINTING ALL PERSONS ========"
+    for r in results:
+        print "================ News =============="
+        print ">>TITLE"
+        print r['title']
+        print ">>CONTENT"
+        text=r['content']
+        print text
         print ">>QUALIFY"
         qualify=SentimentAnalysis.QualifyNew(SentimentAnalysis.FilterNew(text),SentimentAnalysis.ExtractSentilex(Sentilex))
         print qualify
@@ -108,5 +137,5 @@ def getLastDate():
     return dateFinal
 
 #printAll()
-search("país")
+#search("país")
 

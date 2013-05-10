@@ -90,14 +90,18 @@ def collectNewNotices(newsFeedX):
     writer = indexGeral.writer()
     # this function is defined in NewsSearch module and retrieve the last date insert in index
     lastDate = NewsSearch.getLastDate()
+    print lastDate
     for item in newsFeed.entries:
         dateIn = item.published_parsed
         dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4], dateIn[5])
+        print dateFinal
         # only adds a item if it's more recent that the ones stored in the index
         if(dateFinal > lastDate):
+            print "ENTREI AQUI"
             titleFinal = item.title
             newsLink = item.link
             new=getAllNew(newsLink)
+            # COLOCAR UM ID PARA NOTICIA
             writer.add_document(content=new, date=dateFinal, title=titleFinal)
     writer.commit()
     
@@ -111,14 +115,14 @@ def getAllNew(link):
     new='\n'.join([k.text for k in soup.find(id='Article').find_all('p')])
     return new
 
-def main():
+#def main():
 
-    poppulateIndex(newsFeedJN)
-    NewsSearch.printAll()
+    #poppulateIndex(newsFeedJN)
+    #NewsSearch.printAll()
     #collectNewNotices(newsFeedDN)
     #NewsSearch.printAll()
 
-main()
+#main()
 
 
 
@@ -127,7 +131,7 @@ main()
 #===============================================================================
 
 # initializing the database
-conn = sqlite3.connect("teste.db")
+conn = sqlite3.connect("jn.db")
 # initializing the cursor
 cursor = conn.cursor()
 
