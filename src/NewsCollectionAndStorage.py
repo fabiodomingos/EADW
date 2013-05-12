@@ -206,4 +206,11 @@ def collectNewItemsSqLite(newsFeedX):
             new=getAllNew(newsLink)
             # insert some data
             addNew(titleIn, new, dateFinal)
-            
+
+def main():
+    createTable()
+    poppulateDb(newsFeedDN)
+    getAllDb()
+
+main()
+                

@@ -29,71 +29,93 @@ token = NLP_PT.tokenizerPT()
 sentilexfile='SentiLex-PT02/SentiLex-lem-PT02.txt'
 sentilexDic = SentimentAnalysis.extractSentilex(sentilexfile)
 
-#interface
-while(1):
-    print "DATA MINING - INTERFACE"
-    print "1 - Populate DB"
-    print "2 - Collect new News"
-    print "3 - Search in the news"
-    
-    option = raw_input("Select an option: ")
-    
-    if option == "1":
-        print "Tem ao seu dipor o JN e o DN"
-        feed = raw_input("Select your Newspaper: ")
-        if feed=="DN":
-            feed=DN
-            NewsCollectionAndStorage.poppulateIndex(feed)
-            NewsSearch.printAll()
-            continue
-        elif feed=="JN":
-            feed=JN
-            NewsCollectionAndStorage.poppulateIndex(feed)
-            NewsSearch.printAll()
-            continue
-        else:
-            print "Invalid Input: You need to choose JN or DN"
-    
-    elif option == "2":
-        print "Tem ao seu dipor o JN e o DN"
-        feed = raw_input("Select your Newspaper: ")
-        if feed=="DN":
-            feed=DN
-            NewsCollectionAndStorage.collectNewNotices(feed)
-            NewsSearch.printAll()
-            continue
-        elif feed=="JN":
-            feed=JN
-            NewsCollectionAndStorage.collectNewNotices(feed)
-            NewsSearch.printAll()
-            continue
-        else:
-            print "Invalid Input: You need to choose JN or DN"
-    
-    elif option == "3":
-        search = raw_input("Find the news with word: ")
-        NewsSearch.searchByRelevance(search)
+# FUN‚ÌO MENU SEARCH QUE CONTEM AS OP‚ÍES DENTRO DE UMA PESQUISA
+def menuSearch(search):
+    NewsSearch.searchByRelevance(search)
+    while(1):
+        print "MENU SEARCH"
+        print "1 - Search Personalities"
+        print "2- Qualify News"
+        print "3 - Most Relevant Personalitie"
+        print "0 - Return to Main Menu"
         
-        while(1):            
-            print "1 - Search the Personalities in the news with your word"
-            print "2 - Qualify the News with your word"
-            print "0 - Return to Interface"
+        option = raw_input("Select an option: ")
+        
+        if option == "1":
+            NewsSearch.searchByPersonalitie(search)
+            continue
+        
+        elif option == "2":
+            NewsSearch.searchByQualify(search, sentilexDic)
+            continue
+        
+        elif option == "3":
+            print "FAZER FUN‚ÌO PARA A PERSONALIDADE MAIS RELEVANTE"
+            continue
+        
+        elif option == "0":
+            return
+        
+        else:
+            print "Invalid Input: Insert the option Number.\n"
+            continue
             
-            menuOption= raw_input("Select an option: ")
+        
+# FUN‚ÌO MENU PRINCIPAL ONDE ESTÌO AS OP‚ÍES DE ADICIONAR NOVAS NOTICIAS OU PESQUISAR NAS NOTICIAS    
+def menuPrincipal():
+    while(1):
+        print "MENU PRINCIPAL"
+        print "1 - Collect new News"
+        print "2 - Search in the News"
+        print "3 - Exit"
             
-            if menuOption == "1":
-                NewsSearch.searchByPersonalitie(search)
+        option = raw_input("Select an option: ")
+    
+        if option == "1":
+            print "Tem ao seu dipor o JN e o DN"
+            feed = raw_input("Select your Newspaper: ")
+            if feed=="DN":
+                print "PENSAR COMO FAZER O COLLECT"
                 continue
-            
-            elif menuOption == "2":
-                NewsSearch.searchByQualify(search, sentilexDic)
+            elif feed=="JN":
+                print "PENSAR COMO FAZER O COLLECT"
                 continue
+            else:
+                print "Invalid Input: You need to choose JN or DN"
+        
+        elif option == "2":
+            search = raw_input("Find news with word: ")
+            menuSearch(search)
+        
+        elif option == "3":
+            return
+        
+        else:
+            print "Invalid Input: Insert the option Number.\n"
+            continue
             
-            elif menuOption == "0":
-                break
-            else: 
-                print "Invalid Input: Insert the option Number.\n"
-                continue    
-    else:
-        print "Invalid Input: Insert the option Number.\n"
-        continue
+def main():
+    # VAI ARRANCAR A INTERFACE COM AS OP‚ÍES DE USAR UMA DB EXISTENTE OU CRIAR UMA NOVA DB 
+    while(1):
+        print "DATA MINING - INTERFACE"
+        print "1 - Use a DB system"
+        print "2 - Create a new DB"
+    
+        option = raw_input("Select an option: ")
+    
+        if option == "1":
+            print "FALTA FAZER IR BUSCAR VARIAS DB E CHAMA MENU PRINCIPAL "
+            menuPrincipal()
+            break
+        
+        elif option == "2":
+            print "FALTA CRIAR NOVA DB E CHAMA MENU PRINCIPAL"
+            menuPrincipal()
+            break
+        
+        else:
+            print "Invalid Input: Insert the option Number.\n"
+            continue
+
+            
+            
