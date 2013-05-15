@@ -130,6 +130,16 @@ class tokenizerPT():
                 outputdict.update({word: i})
                 i = i + 1
         return outputdict
+
+    def special_tokenizerPT(self, text):
+        """ retrieves a dictionary with indicies for each word """
+        outputdict = {}
+        i = 0
+        for sent in self.sent_tokenizeEN(text):
+            for word in self.word_tokenizeEN(sent):
+                outputdict.update({i: word})
+                i = i + 1
+        return outputdict
     
     def filterStopsList(self, text):
         """ discard symbols and words that are not used for

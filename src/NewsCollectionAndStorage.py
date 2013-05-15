@@ -10,20 +10,8 @@ Created on 2013/04/05
 3) collect new news items
 4) store them in a common repository for further processing
 
-- Notes:
-The news collection should be performed on demand
-and new news items found should be added to the repository.
-
 
 '''
-# # OPTIONAL TODO
-# # Implement the real articles linked by the feed
-# # to do that is necessary to explore STORED/JUST INDEXED ITEMS and how it works
-
-# # MORE THAN OPTIONAL TODO
-# # Explore whoosh documentation: http://pythonhosted.org/Whoosh/index.html
-# # and do awesome things with that
-
 
 # ## IMPORTS
 from datetime import datetime
@@ -33,7 +21,7 @@ from bs4 import BeautifulSoup as BS
 import NewsSearch
 import feedparser
 import os.path
-import sqlite3
+#import sqlite3
 import requests
 
 
@@ -45,7 +33,6 @@ newsFeedNamesEnum = enumerate(newsFeedNames)
 # FEEDs URLS
 newsFeedDN = "http://feeds.dn.pt/DN-Politica"
 newsFeedJN = "http://feeds.jn.pt/JN-Politica"
-newsFeedTeste = r'/Users/guntty/git/EADW/src/teste.xml'
 
 
 # ## MAIN FUNCTIONS    
@@ -90,14 +77,11 @@ def collectNewNotices(newsFeedX):
     writer = indexGeral.writer()
     # this function is defined in NewsSearch module and retrieve the last date insert in index
     lastDate = NewsSearch.getLastDate()
-    print lastDate
     for item in newsFeed.entries:
         dateIn = item.published_parsed
         dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4], dateIn[5])
-        print dateFinal
         # only adds a item if it's more recent that the ones stored in the index
         if(dateFinal > lastDate):
-            print "ENTREI AQUI"
             titleFinal = item.title
             newsLink = item.link
             new=getAllNew(newsLink)
@@ -127,44 +111,44 @@ def getAllNew(link):
 
 
 #===============================================================================
-#  SQLITE FUNCTIONS - NOT USED NOW - MAYBE WE WILL HAVE THE OPTION TO CHOOSE
+#  SQLITE FUNCTIONS - NOT USED 
 #===============================================================================
 
 # initializing the database
-conn = sqlite3.connect("jn.db")
+#conn = sqlite3.connect("jn.db")
 # initializing the cursor
-cursor = conn.cursor()
+#cursor = conn.cursor()
 
 # create a new Table with titulo, conteudo, data
 # this function is just called once
-def createTable():
+#def createTable():
     # create a table
     # cursor.execute("""CREATE TABLE newsfeeds
     #                 (newsfeedname text, title text, content text, date text) 
     #              """)
-    cursor.execute('''CREATE TABLE news (titulo TEXT, conteudo TEXT, date TEXT)''')
+#    cursor.execute('''CREATE TABLE news (titulo TEXT, conteudo TEXT, date TEXT)''')
     
 # AUX Function
 # Insert new 'New' on the table news
-def addNew(titulo, conteudo, date):
-    cursor.execute('''INSERT INTO news (titulo, conteudo, date)
-    VALUES (?,?,?)''', (titulo, conteudo, date))
+#def addNew(titulo, conteudo, date):
+#    cursor.execute('''INSERT INTO news (titulo, conteudo, date)
+#    VALUES (?,?,?)''', (titulo, conteudo, date))
     
 # # This function populate a db
 # # without care about updated time
 # # just pick up all the news item and put it into the db
 # # This function is called once - to poppulate the db in the beginning
-def poppulateDb(newsFeedX):
-    newsFeed = feedparser.parse(newsFeedX)
-    for item in newsFeed.entries:
-        titleIn = item.title
-        newsLink = item.link
-        new=getAllNew(newsLink)
+#def poppulateDb(newsFeedX):
+#    newsFeed = feedparser.parse(newsFeedX)
+#    for item in newsFeed.entries:
+#        titleIn = item.title
+#       newsLink = item.link
+#        new=getAllNew(newsLink)
         # print contentOut
-        dateIn = item.published_parsed
-        dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4], dateIn[5])
+#        dateIn = item.published_parsed
+#       dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4], dateIn[5])
         # insert some data in database
-        addNew(titleIn, new, dateFinal)
+#       addNew(titleIn, new, dateFinal)
         
 # SERVE APENAS PARA FAZER TESTES DE METER COISAS NA DB
 #def populateTeste():
@@ -177,40 +161,40 @@ def poppulateDb(newsFeedX):
     #addNew(titulo, contentOut, dataFinal)
     
 # Print all db elements    
-def getAllDb():
-    cursor.execute('SELECT * FROM news ORDER BY date DESC')
-    for i in cursor:
-        print "\n"
-        for j in i:
-            print j
-            
-def getLastUpdatedDate():
-    cursor.execute('SELECT date FROM news ORDER BY date DESC LIMIT 1')
-    for i in cursor:
-        # Converte o tuplo para string 
-        tuploTOstr = "".join(i)
-        # Converte a string unicode para datetime
-        date = datetime.strptime(tuploTOstr, '%Y-%m-%d %H:%M:%S')
-        return date
-    
+#def getAllDb():
+#    cursor.execute('SELECT * FROM news ORDER BY date DESC')
+#    for i in cursor:
+#        print "\n"
+#        for j in i:
+#            print j
+#            
+#def getLastUpdatedDate():
+#    cursor.execute('SELECT date FROM news ORDER BY date DESC LIMIT 1')
+#    for i in cursor:
+#        # Converte o tuplo para string 
+#       tuploTOstr = "".join(i)
+#      # Converte a string unicode para datetime
+#       date = datetime.strptime(tuploTOstr, '%Y-%m-%d %H:%M:%S')
+#       return date
+#   
 # function to search if there are new news and collect them
-def collectNewItemsSqLite(newsFeedX):
-    newsFeed = feedparser.parse(newsFeedX)
-    lastDbDate = getLastUpdatedDate()
-    for item in newsFeed.entries:
-        dateIn = item.published_parsed
-        dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4], dateIn[5])
-        if(dateFinal > lastDbDate):
-            titleIn = item.title
-            newsLink = item.link
-            new=getAllNew(newsLink)
+#def collectNewItemsSqLite(newsFeedX):
+#   newsFeed = feedparser.parse(newsFeedX)
+#  lastDbDate = getLastUpdatedDate()
+#  for item in newsFeed.entries:
+#      dateIn = item.published_parsed
+#      dateFinal = datetime(dateIn[0], dateIn[1], dateIn[2], dateIn[3], dateIn[4], dateIn[5])
+#     if(dateFinal > lastDbDate):
+#         titleIn = item.title
+#            newsLink = item.link
+#            new=getAllNew(newsLink)
             # insert some data
-            addNew(titleIn, new, dateFinal)
+#            addNew(titleIn, new, dateFinal)
 
-def main():
-    createTable()
-    poppulateDb(newsFeedDN)
-    getAllDb()
+#def main():
+#    createTable()
+#    poppulateDb(newsFeedDN)
+#    getAllDb()
 
-main()
+#main()
                 
