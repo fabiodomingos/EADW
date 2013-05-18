@@ -34,6 +34,7 @@ def finalPersonalities(text, politicians_local):
     persons = extractEntities(text)
     for person in persons:
         pessoa=isPersonalitieFamous(person)
+        pessoa = pessoa[0]
         if pessoa!=False and pessoa not in finallist:
             if pessoa not in politicians_local:
                 politicians_local.update({pessoa: (1, politicians[pessoa][1])})
@@ -41,19 +42,28 @@ def finalPersonalities(text, politicians_local):
                 politicians_local.update({pessoa: (politicians_local[pessoa][0] + 1, politicians[pessoa][1])})
     return politicians_local;
 
-def retrievePersonalities(text):
+def retrievePersonalities(text, i):
+    """ find personalites / politicians in a text
+    @input: a text, string
+            i = 1 retrieves the original searched named
+            i = 0 retrieves the name in the testing list """
     finallist = []
     persons = extractEntities(text)
     for person in persons:
         pessoa=isPersonalitieFamous(person)
+        pessoa = pessoa[i]
         if pessoa!=False and pessoa not in finallist:
             finallist.append(pessoa)
     return finallist;
 
 def mostPopularPolitician(dicti):
+    """ calculate the most popular politician in a search
+    @input a dictionary with politic parti occorrencies """
     return max(dicti.iterkeys(), key=(lambda key: dicti[key][0]))
 
 def mostPopularParty(dicti):
+    """ calculate the most popular political party in a search
+    @input a dictionary with politic party occorrencies """
     parties = {'PS': 0 , 'PSD' : 0, 'BE':0, 'CDS-PP':0, 'PCP':0, 'PRD':0, 'ASDI':0,'MDPCDE':0,'PEV':0,'UEDS':0,'CDS':0,'UDP':0,'DR':0,'PSN':0,'PPM':0,'ID':0}
     for key in dicti:    
         if dicti[key][1] == "PS":
@@ -93,14 +103,14 @@ def mostPopularParty(dicti):
 # ## AUXILIAR FUNCTIONS
 
 def isPersonalitieFamous(name, p = politicians):
-    """ receives a name and search in personalities SAPO DB if the person
-    exists and retrieve the more famous if found more than one 
+    """ receives a name and search in politicians 
     @input: name - text string
     @return: person if exists at least one, False otherwise """
     famous = -1
     person = False
+    catch = False
     for key in p:
-        # se o nome é uma só palavra evita procurar dentro de outro nome de uma so palavra
+        # se o nome √© uma s√≥ palavra evita procurar dentro de outro nome de uma so palavra
         if len(name.split(" ")) == 1:
             for word in key.split(" "):
                 if name == word:
@@ -108,24 +118,18 @@ def isPersonalitieFamous(name, p = politicians):
                         famous = p[key][0]
                         if famous < 10:
                             person = False
+                            catch = False
                         else:
                             person = key
+                            catch = name
         else:
             if name in key:
                 if p[key][0] > famous:
                     famous = p[key][0]
                     person = key
-    return person
+                    catch = name
+    return person, catch
 
-def isPersonalitie(name, p = politicians):
-    """ receives a name and search in personalities SAPO DB if a person
-    with that name exists.
-    @input: name - text string
-    @return: person (the first that match the condition), False otherwise """
-    for key in p:
-        if name in key:
-            return key
-    return False
 
 def extractEntities(text):
     """ extract NamedEntities (filter only PERSON chunk) and retrieve a list
@@ -146,12 +150,7 @@ def extractEntities(text):
     return returnlist
 
 def removeNonAscii(s): 
+    """ substitues all the non ascii characters by the letter 'a' """
     return "".join([x if ord(x) < 128 else 'a' for x in s])
 
             
-
-#def main():
-    
-
-    
-#main()

@@ -11,10 +11,6 @@ Output: list of news ranked by relevance (with e.g BM25)
 
 
 '''
-# # OPTIONAL TODO
-# # Various types of search like: AND/OR, PHRASE/WORD
-# # Highlight the results
-
 
 # IMPORTS
 from whoosh.qparser import QueryParser, OrGroup
@@ -26,16 +22,18 @@ import NLP_PT
 import json
 import os
 
-Sentilex = 'SentiLex-PT02/SentiLex-lem-PT02.txt'
 
+## INITIALIZATIONS
+
+# token por portuguese language
 token = NLP_PT.tokenizerPT()
 
+# temporary and history files
 filepartiesH = "parties_history.txt"
 filequeries = "queries.txt"
 filepoliticsH = "politicians_history.txt"
 filequeriesH = "queries_history.txt"
 fileparties = "parties.txt"
-
 
 
 # ## MAIN FUNCTIONS
@@ -44,6 +42,8 @@ fileparties = "parties.txt"
 # function that receives a query and returns a list with news that match
 # the search, sorted by BM25
 def search(queries):
+    """ receives a query
+    @returns items resulted by the query search, sorted by BM25 printed """
     politic_local = {}
     person = {}
     if os.path.exists(filequeries):
@@ -58,9 +58,6 @@ def search(queries):
     else:
         listparties = []
         
-    """ receives a query
-        @returns items resulted by the query search, sorted by BM25
-        THIS FUNCTION IS PRINTING IN THE SCREEN NOW"""
     ix = open_dir("index")
     query = QueryParser("content", ix.schema, group=OrGroup).parse(u"" + queries) 
     results = ix.searcher().search(query, limit=None)
@@ -76,7 +73,10 @@ def search(queries):
     json.dump(person, open('politicians_local.txt', 'w'))
     return results, person, i, 
         
-# ## AUXILIAR FUNCTIONS
+        
+# ## AUXILIAR PRINT FUNCTIONS
+
+# FOR SEARCHES
 
 def printAll():
     """ dump. print all the items in the Index """
@@ -109,18 +109,21 @@ def printResults(results):
 
 
 def printPersons(results):
-    """ dump. print all items in a result Object """
+    """ dump. print all items in a result Object
+    @ return: printing with title and politicians in the news
+    invoking ExtractedNamedEntities module """
     print "========== PRINTING ALL PERSONS ========"
     for r in results:
         print "================ News =============="
         print ">>TITLE"
         print r['title']
         print ">>PERSONS"
-        persons = ExtractNamedEntities.retrievePersonalities(r['content'])
+        persons = ExtractNamedEntities.retrievePersonalities(r['content'], 0)
         for p in persons:
             print p
         
 def printMostPopularPolitician():
+    """ print to the screen the most popular politician in a search """
     print "========== MOST POPULAR POLITICIAN ========="
     filen = "politicians_local.txt"
     if not os.path.exists(filen):
@@ -130,6 +133,7 @@ def printMostPopularPolitician():
         print ExtractNamedEntities.mostPopularPolitician(politicians)
 
 def printMostPopularParty():
+    """ print in the screen the most popular party (related to politicians) in a search """
     print "========== MOST POPULAR PARTY =========="
     filen = "politicians_local.txt"
     if not os.path.exists(filen):
@@ -137,8 +141,14 @@ def printMostPopularParty():
     else:
         politicians = json.load(open(filen))
         print ExtractNamedEntities.mostPopularParty(politicians)
-    
+
+
+# FOR HISTORY
+
 def printQueriesHistory(local=False):
+    """ print a list of searched queries
+    local=False is all time history
+    local=True is only current session """
     # # caso iremos imprimir historico
     merge = []
     if local == False:
@@ -165,6 +175,9 @@ def printQueriesHistory(local=False):
 
 
 def printPersonHistory(local=False):
+    """ print list of persons that appeared in news
+    local=False is all time history
+    local=True is only for the current search """
     fileG = "politicians_global.txt"
     fileH = "politicians_history.txt"
     # # caso iremos imprimir historico
@@ -196,6 +209,9 @@ def printPersonHistory(local=False):
             return True
         
 def printPartyHistory(local=False):
+    """ print a list of Political Parties retrieved in searches
+    local = False is for all time searches
+    local = True is only for the current search """
     merge = []
     # # caso iremos imprimir historico
     if local == False:
@@ -222,6 +238,9 @@ def printPartyHistory(local=False):
             return True
         
 def printMostPopularPoliticianHistory(local=False):
+    """ print the most popular politician in a history
+    local = False history is all the searches done
+    local = True is only the current session """
     fileG = "politicians_global.txt"
     # # caso iremos imprimir historico
     if local == False:
@@ -250,6 +269,9 @@ def printMostPopularPoliticianHistory(local=False):
             return True
 
 def printMostPopularPartyHistory(local=False):
+    """ print the most popular political party in a history
+    local = False history is all the searches done
+    local = True is only the current session """
     fileG = "politicians_global.txt"
     # # caso iremos imprimir historico
     if local == False:
@@ -275,7 +297,11 @@ def printMostPopularPartyHistory(local=False):
         else:
             return True
         
+## # AUXILIAR SAVE FUNCTIONS        
+        
 def savePolitics():
+    """ save the content of politicians found in a search to a temporary file
+    where could have more or not politicians found in another searches did in the current session """
     filen = "politicians_local.txt"
     fileg = "politicians_global.txt"
     if not os.path.exists(filen):
@@ -294,6 +320,7 @@ def savePolitics():
         json.dump(politiciansG, open(fileg, 'w'))
 
 def savePoliticsHistory():
+    """ save politicians found to all time history persistent file """
     fileg = "politicians_global.txt"
     fileh = filepoliticsH
     if not os.path.exists(fileg):
@@ -313,6 +340,7 @@ def savePoliticsHistory():
         json.dump(politiciansH, open(fileh, 'w'))
     
 def saveQueriesHistory():
+    """ save queries searched to persistent file that could be all time history until deleted """
     if not os.path.exists(filequeries):
         pass
     else:
@@ -327,6 +355,7 @@ def saveQueriesHistory():
 
 
 def savePartiesHistory():
+    """ save all parties retrieved from search to history , persistent file that could be or not deleted in another chance """
     if not os.path.exists(fileparties):
         pass
     else:
@@ -341,6 +370,7 @@ def savePartiesHistory():
     
     
 def clearHistory(local=False):
+    """ clear all the history saved in various sessions """
     returned = False
     if os.path.exists(filequeries) and local == True:
         deleteFile(fileparties)
@@ -362,6 +392,8 @@ def clearHistory(local=False):
     return returned
     
 def deleteFile(myfile):
+    """ delete a file 
+    @input filename """
     if os.path.isfile(myfile):
         os.remove(myfile)
         
@@ -377,8 +409,7 @@ def printQualify(results, extractsentilex):
         print r['title']
         text = r['content']
         print ">>QUALIFY"
-        qualify = SentimentAnalysis.qualifyNew(token.filterStopsSet(text), extractsentilex)
-        print qualify
+        SentimentAnalysis.qualifyNew(token.filterStopsSet(text), extractsentilex)
             
 def getLastNotice():
     """ @returns the last added notice to the Index """
@@ -396,11 +427,12 @@ def getLastDate():
     dateFinal = hit['date']
     return dateFinal
 
-# printAll()
-# search("país")
-# r = search("Coelho")
-# a = search("Cavaco")
-# printResults(r)
-# printPersons(r)
-# printMostPopularPolitician()
-# printMostPopularParty()
+def printQualifyPolticians(results, sentilex):
+    print "========== PRINTING ALL PERSONS ========"
+    for r in results:
+        print "================ News =============="
+        print ">>TITLE"
+        print r['title']
+        text = r['content']
+        print ">>QUALIFY"
+        SentimentAnalysis.personSentimenti(SentimentAnalysis.createPOSdict(text), sentilex)

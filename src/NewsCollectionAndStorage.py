@@ -96,8 +96,11 @@ def collectNewNotices(newsFeedX):
 def getAllNew(link):
     html = requests.get(link).text
     soup = BS(html)
-    new='\n'.join([k.text for k in soup.find(id='Article').find_all('p')])
-    return new
+    try:
+        new='\n'.join([k.text for k in soup.find(id='Article').find_all('p')])
+        return new
+    except:
+        pass
 
 #def main():
 

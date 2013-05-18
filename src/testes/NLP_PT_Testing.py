@@ -9,7 +9,6 @@ to test and understand pos tag in portuguese words and trained taggers with flor
 
 import nltk
 import NLP_PT
-import ExtractNamedEntities
 
 # instance of NLP_PT
 token = NLP_PT.tokenizerPT()
@@ -51,58 +50,69 @@ def extractall_entities0(tagwords):
 def main():
     
     print "---- FLORESTA POST TAG AUBT ----"
-    """
+
     text = u"O Amilcar é um camelo com duas bossas e muito pelo".encode('latin-1')
     words = token.compound_tokenizePT(text, "TB")
     tagwords = tagger.florestaPOStag_aubt(words)
-    extractall_entities0(tagwords)
+    print tagwords
+    print "------------------------------------------------------------------------------------------------------------"
     
     text=u"Cavaco Silva reclama indignado com Passos Coelho. pois António José Seguro está a fazer caixinha.".encode('latin-1')
     words = token.compound_tokenizePT(text, "TB")
     tagwords = tagger.florestaPOStag_aubt(words)
-    extractall_entities0(tagwords)
+    print tagwords
+    print "------------------------------------------------------------------------------------------------------------"
     
     text=u"A Angela é gorda e feia.".encode('latin-1')
     words = token.compound_tokenizePT(text, "TB")
     tagwords = tagger.florestaPOStag_aubt(words)
-    extractall_entities0(tagwords)
+    print tagwords
+    print "------------------------------------------------------------------------------------------------------------"
     
     text=u"O ex-primeiro-ministro José Sócrates é um mentiroso.".encode('latin-1')
     words = token.compound_tokenizePT(text, "TB")
     tagwords = tagger.florestaPOStag_aubt(words)
-    extractall_entities0(tagwords)
+    print tagwords
+    print "------------------------------------------------------------------------------------------------------------"
     
     text=u"Maria destestava apanhar sol.".encode('latin-1')
     words = token.compound_tokenizePT(text, "TB")
     tagwords = tagger.florestaPOStag_aubt(words)
-    extractall_entities0(tagwords)
+    print tagwords
+    print "------------------------------------------------------------------------------------------------------------"
+    
     
     print "---- FLORESTA POST TAG BRILL AUBT ----"
     
     text = u"O Amilcar é um camelo com duas bossas e muito pelo".encode('latin-1')
     words = token.compound_tokenizePT(text, "TB")
     tagwords = tagger.florestaPOStag_brill_aubt(words)
-    extractall_entities0(tagwords)
+    print tagwords
+    print "------------------------------------------------------------------------------------------------------------"
     
     text=u"Cavaco Silva reclama indignado com Passos Coelho. pois António José Seguro está a fazer caixinha.".encode('latin-1')
     words = token.compound_tokenizePT(text, "TB")
     tagwords = tagger.florestaPOStag_brill_aubt(words)
-    extractall_entities0(tagwords)
+    print tagwords
+    print "------------------------------------------------------------------------------------------------------------"
     
     text=u"A Angela é gorda e feia.".encode('latin-1')
     words = token.compound_tokenizePT(text, "TB")
     tagwords = tagger.florestaPOStag_brill_aubt(words)
-    extractall_entities0(tagwords)
+    print tagwords
+    print "------------------------------------------------------------------------------------------------------------"
     
     text=u"O ex-primeiro-ministro José Sócrates é um mentiroso.".encode('latin-1')
     words = token.compound_tokenizePT(text, "TB")
     tagwords = tagger.florestaPOStag_brill_aubt(words)
-    extractall_entities0(tagwords)
+    print tagwords
+    print "------------------------------------------------------------------------------------------------------------"
     
     text=u"Maria destestava apanhar sol.".encode('latin-1')
     words = token.compound_tokenizePT(text, "TB")
     tagwords = tagger.florestaPOStag_brill_aubt(words)
-    extractall_entities0(tagwords)
+    print tagwords
+    print "------------------------------------------------------------------------------------------------------------" """
     
     print "---- MAC MORPHO AUBT ----"
     
@@ -155,11 +165,11 @@ def main():
     
     print "era necessário ter agora um chunk treinado com lingua portuguesa... para conseguir melhores resultados" """
     
-    catch = u"Em declarações à Antena 1, Manuel Alegre explica que não sabia de nada oficialmente:\"Soube há pouco tempo por intermédio do meu camarada António José Seguro que teria sido convocado o Conselho de Estado. Ele perguntou-se se eu tinha recebido a convocatória porque ele não tinha recebido até agora. Ora, não recebi. E fiquei a também saber que que o doutor Mário Soares também ainda não recebeu\". Esta é a décima reunião do Conselho de Estado, o órgão político de consulta do Presidente da República, desde que Cavaco Silva é chefe de Estado. A convocatória de Cavaco Silva surge um dia depois de o Governo ter aprovado as condições da contribuição de sustentabilidade do sistema de pensões, também chamada de \"TSU dos pensionistas\", numa reunião extraordinária do Conselho de Ministros, que confirmou as condições necessárias ao fecho da sétima avaliação da 'troika'."
-    print ExtractNamedEntities.retrievePersonalities(catch)
+  #  catch = u"Em declarações à Antena 1, Manuel Alegre explica que não sabia de nada oficialmente:\"Soube há pouco tempo por intermédio do meu camarada António José Seguro que teria sido convocado o Conselho de Estado. Ele perguntou-se se eu tinha recebido a convocatória porque ele não tinha recebido até agora. Ora, não recebi. E fiquei a também saber que que o doutor Mário Soares também ainda não recebeu\". Esta é a décima reunião do Conselho de Estado, o órgão político de consulta do Presidente da República, desde que Cavaco Silva é chefe de Estado. A convocatória de Cavaco Silva surge um dia depois de o Governo ter aprovado as condições da contribuição de sustentabilidade do sistema de pensões, também chamada de \"TSU dos pensionistas\", numa reunião extraordinária do Conselho de Ministros, que confirmou as condições necessárias ao fecho da sétima avaliação da 'troika'."
+ #   print ExtractNamedEntities.retrievePersonalities(catch)
     
-    catch2 = u"Daniel Oliveira sublinhou, este sábado, na conferência \"Vencer a crise com o Estado Social e com a Democracia\", promovida pelo Congresso Democrático das Alternativas, no Fórum Lisboa, que não há muita margem de tempo para a ação e desafiou a Esquerda a unir-se para derrubar o Governo. \"O que perdermos nos próximos meses demorará décadas a reconstruir. Não nos sobra muito tempo. Por isso, se me perdoam a linguagem vulgar, fica o meu apelo: entendam-se porra!\", afirmou o antigo militante histórico do BE, colhendo aplausos na sala. Na intervenção que proferiu, e onde se referiu a Vítor Gaspar como \"o louco que dirige as Finanças\" e que vai aplicando cortes usando sempre o argumento de que não há dinheiro, sublinhou que \"os cortes só acabarão quando não houver mais nada para cortar\" e que, nessa altura, já \"não haverá dinheiro nem país\". A seu ver, destruir o Estado Social não é um programa de emergência para salvar o país, é o aproveitamento de uma oportunidade histórica para privatizar a democracia social\". Para Daniel Oliveira, \"este é o ajustamento desejado\", que \"ficará completo com um Estado Social caritativo e degradado\". Defendeu, por isso, que é necessário, quanto antes, renegociar a dívida e denunciar o memorando assinado com a troika\". As alternativas ao atual cenário, continuou, depende de duas condições: \"a demissão imediata do Governo que traiu os portugueses, com eleições antecipadas e a assunção por todas as oposições de que vivemos num momento de emergência nacional\"."
-    print ExtractNamedEntities.retrievePersonalities(catch2)
+ #   catch2 = u"Daniel Oliveira sublinhou, este sábado, na conferência \"Vencer a crise com o Estado Social e com a Democracia\", promovida pelo Congresso Democrático das Alternativas, no Fórum Lisboa, que não há muita margem de tempo para a ação e desafiou a Esquerda a unir-se para derrubar o Governo. \"O que perdermos nos próximos meses demorará décadas a reconstruir. Não nos sobra muito tempo. Por isso, se me perdoam a linguagem vulgar, fica o meu apelo: entendam-se porra!\", afirmou o antigo militante histórico do BE, colhendo aplausos na sala. Na intervenção que proferiu, e onde se referiu a Vítor Gaspar como \"o louco que dirige as Finanças\" e que vai aplicando cortes usando sempre o argumento de que não há dinheiro, sublinhou que \"os cortes só acabarão quando não houver mais nada para cortar\" e que, nessa altura, já \"não haverá dinheiro nem país\". A seu ver, destruir o Estado Social não é um programa de emergência para salvar o país, é o aproveitamento de uma oportunidade histórica para privatizar a democracia social\". Para Daniel Oliveira, \"este é o ajustamento desejado\", que \"ficará completo com um Estado Social caritativo e degradado\". Defendeu, por isso, que é necessário, quanto antes, renegociar a dívida e denunciar o memorando assinado com a troika\". As alternativas ao atual cenário, continuou, depende de duas condições: \"a demissão imediata do Governo que traiu os portugueses, com eleições antecipadas e a assunção por todas as oposições de que vivemos num momento de emergência nacional\"."
+  #  print ExtractNamedEntities.retrievePersonalities(catch2)
     
  
    

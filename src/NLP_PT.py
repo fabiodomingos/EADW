@@ -5,13 +5,12 @@ Created on 2013/05/05
 
 @author: goncalocarito, fabiodomingos
 
-Natural Language Processing in Portuguese.
+Natural Language Processing in Portuguese. 
 Classes.
 
 '''
 
 import nltk
-from nltk.corpus import floresta
 from nltk.tokenize import WordPunctTokenizer
 from nltk.tokenize import TreebankWordTokenizer
 from nltk.corpus import stopwords
@@ -70,7 +69,7 @@ class POStagChunk:
     
 class tokenizerPT():
     '''
-    function for tokenizer of portuguese texts, sentences, words 
+    functions for tokenizer of portuguese texts, sentences, words 
     '''
     
     def sent_tokenizePT(self, text):

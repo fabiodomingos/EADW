@@ -14,10 +14,10 @@ in each returned news item
 
 '''
 import NewsSearch
-import SentimentAnalysis
 import NLP_PT
 import os
 import NewsCollectionAndStorage
+import json
 
 
 # FEEDs URLS
@@ -27,26 +27,60 @@ JN = "http://feeds.jn.pt/JN-Politica"
 token = NLP_PT.tokenizerPT()
 
 ## RUN
-sentilexfile='SentiLex-PT02/SentiLex-lem-PT02.txt'
-sentilexDic = SentimentAnalysis.extractSentilex(sentilexfile)
 
+sentilexDic = json.load(open("sentilex.txt"))
 
-#NewsCollectionAndStorage.poppulateIndex(JN)
-#NewsCollectionAndStorage.poppulateIndex(DN)
-NewsCollectionAndStorage.collectNewNotices(JN)
-NewsCollectionAndStorage.collectNewNotices(DN)
 
 
 while(1):
-    print 'INTERFACE - POLITICS SEARCH'
-    print '1 - New Search'
-    print '2 - History'
+    print 'INTERFACE - POLITICAL SEARCH'
+    print '1 - Collection and Storage'
+    print '2 - New Search'
+    print '3 - History'
     print '0 - Exit'
 
     option = raw_input("Select an option: ")
+    
+    if option == "1":
+        while (1):
+            print '\n'
+            print "COLLECTION AND STORAGE MENU"
+            print "1 - Collect new News"
+            print "2 - Clean Database and Collect News"
+            print "0 - Return to INTERFACE"
+            
+            menuoption = raw_input("Select an option: ")
+            
+            if menuoption == "1":
+                print "Collecting..."
+                NewsCollectionAndStorage.collectNewNotices(JN)
+                NewsCollectionAndStorage.collectNewNotices(DN)
+                print "News Collected"
+                
+            elif menuoption == "2":
+                opt = raw_input("You will lost some of your old saved content. Are you sure? (y/n) ")
+                if opt == "y" or opt == "Y":
+                    print "Cleaning..."
+                    NewsCollectionAndStorage.poppulateIndex(JN)
+                    print "Collecting..."
+                    NewsCollectionAndStorage.poppulateIndex(DN)
+                    print "Database cleaned and News Collected"
+                elif opt == "n" or opt == "N":
+                    pass
+                else:
+                    print "Invalid Input: Insert y or n.\n"
+                    continue
+            
+            elif menuoption =="0":
+                break
+            
+            else:
+                print "Invalid Input: Insert the option Number.\n"
+                continue
+                    
 
     # OPCAO POR UMA NOVA PESQUISA
-    if option == "1":
+    elif option == "2":
         
         # USER DA UMA PALAVRA PARA PESQUISA
         search = raw_input("Insert a word to search: ")
@@ -63,6 +97,7 @@ while(1):
             print "4 - Most Popular Politician"
             print "5 - Most Popular Political Party"
             print "6 - Qualify News"
+            print "7 - Qualify Politicians"
             print "0 - Return to INTERFACE"
 
             menuoption = raw_input("Select an option: ")
@@ -101,6 +136,11 @@ while(1):
             elif menuoption == "6":
                 NewsSearch.printQualify(results, sentilexDic)
                 continue
+            
+            # OPCAO DE CLASSIFICAR NOTICIA
+            elif menuoption == "7":
+                NewsSearch.printQualifyPolticians(results, sentilexDic)
+                continue
 
             # OPCAO DE SAIR
             elif menuoption == "0":
@@ -113,7 +153,7 @@ while(1):
                 continue
 
     # OPCAO POR VER O HISTORICO
-    elif option == "2":
+    elif option == "3":
         while (1):
             print '\n'
             print "History MENU"
