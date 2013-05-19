@@ -116,8 +116,7 @@ def isPersonalitieFamous(name, p = politicians):
                 if name == word:
                     if p[key][0] > famous:
                         famous = p[key][0]
-                        if famous < 10:
-                            person = False
+                        if famous < 500:
                             catch = False
                         else:
                             person = key
